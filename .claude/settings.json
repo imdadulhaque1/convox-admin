@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp \"/Users/imdadulhaque/Desktop/Apps/connectx_api/server/API_INTEGRATION.md\" \"/Users/imdadulhaque/Desktop/Apps/connectx-admin/API_INTEGRATION.md\" && wc -l \"/Users/imdadulhaque/Desktop/Apps/connectx-admin/API_INTEGRATION.md\")",
+      "Bash(npm ls *)",
+      "Bash(npx --yes chromium-cli --help)",
+      "Bash(node -e \"require\\('playwright'\\)\")",
+      "Bash(npx --yes playwright --version)",
+      "Bash(timeout 90 npx --yes playwright install chromium --with-deps)",
+      "Bash(npx --yes playwright install chromium)",
+      "Bash(curl -s -o /dev/null -w \"status: %{http_code}\\\\n\" http://localhost:3001/login)",
+      "Bash(curl -s -o /dev/null -w \"status: %{http_code}\\\\n\" http://localhost:3000/)",
+      "Bash(npm init *)",
+      "Bash(node shot.mjs)",
+      "Bash(rm -rf \"src/app/api/admin/users/[id]/role\" && find src/app/api -type d | sort)",
+      "Bash(lsof -ti:3001)",
+      "Bash(xargs -r kill)",
+      "Bash(curl -s -X POST http://localhost:3001/api/auth/login -H 'Content-Type: application/json' -d '{\"username\":\"nonexistent_admin_test\",\"password\":\"wrongpass\"}' -w '\\\\nHTTP_STATUS:%{http_code}\\\\n')",
+      "Bash(curl -s -X POST http://localhost:3001/api/auth/forgot-password -H 'Content-Type: application/json' -d '{\"email\":\"nonexistent_test@example.com\"}' -w '\\\\nHTTP_STATUS:%{http_code}\\\\n')",
+      "Bash(curl -s http://localhost:3001/api/admin/users -w \"\\\\nHTTP_STATUS:%{http_code}\\\\n\")",
+      "Bash(curl -s http://localhost:3001/api/admin/admins -w \"\\\\nHTTP_STATUS:%{http_code}\\\\n\")",
+      "Bash(curl -s -o /dev/null -w \"/admins -> %{http_code} \\(redirect: %{redirect_url}\\)\\\\n\" http://localhost:3001/admins)",
+      "Bash(curl -s -o /dev/null -w \"/forgot-password -> %{http_code}\\\\n\" http://localhost:3001/forgot-password)",
+      "Bash(curl -s -o /dev/null -w \"/login -> %{http_code}\\\\n\" http://localhost:3001/login)",
+      "Bash(lsof -nP -iTCP:3001 -sTCP:LISTEN)",
+      "Bash(lsof -ti:3000)"
+    ],
+    "additionalDirectories": [
+      "/Users/imdadulhaque/Desktop/Apps/connectx_api/server",
+      "/Users/imdadulhaque/Desktop/Apps/connectx-admin/src/app/api/admin/users/[id]/role"
+    ]
+  }
+}
