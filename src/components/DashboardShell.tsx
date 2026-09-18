@@ -54,6 +54,9 @@ export function DashboardShell({
 
   const nav = who?.role === "SUPER_ADMIN" ? NAV : NAV.filter((item) => !SUPER_ADMIN_ONLY.has(item.href));
   const currentLabel = nav.find((item) => pathname.startsWith(item.href))?.label ?? "ConvoX Admin";
+  // Same role split as the nav/landing-page logic: Dashboard is SUPER_ADMIN-only, so the
+  // logo shouldn't link a plain ADMIN somewhere that just 403s.
+  const homeHref = who?.role === "SUPER_ADMIN" ? "/dashboard" : "/users";
 
   return (
     <div className="min-h-screen lg:flex">
@@ -88,11 +91,11 @@ export function DashboardShell({
         }`}
       >
         <div className="flex items-center justify-between gap-2 px-5 py-5">
-          <div className="flex items-center gap-2.5">
+          <Link href={homeHref} className="focus-ring flex items-center gap-2.5 rounded-lg transition hover:opacity-80">
             {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, no need for next/image here */}
             <img src="/convox-logo.png" alt="ConvoX" className="h-8 w-8 rounded-lg" />
             <span className="text-sm font-semibold text-white">ConvoX Admin</span>
-          </div>
+          </Link>
           <button
             onClick={() => setMobileOpen(false)}
             className="focus-ring flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-white/5 hover:text-white lg:hidden"

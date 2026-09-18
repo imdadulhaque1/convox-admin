@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ToastProvider } from "@/components/Toast";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
+import { InstallPrompt } from "@/components/InstallPrompt";
 
 export const metadata: Metadata = {
   title: "ConvoX Admin",
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           only), so a real mismatch elsewhere in the tree still gets a warning. */}
       <body className="font-sans antialiased" suppressHydrationWarning>
         <ServiceWorkerRegistration />
+        <InstallPrompt />
         <ToastProvider>{children}</ToastProvider>
       </body>
     </html>
