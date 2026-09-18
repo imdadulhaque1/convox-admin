@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { COOKIE_ACCESS } from "@/lib/session";
+import { COOKIE_ACCESS, COOKIE_WHO } from "@/lib/session";
 
 /**
  * Gate every page except the public auth screens behind the presence of a session cookie.
@@ -17,7 +17,7 @@ export function middleware(request: NextRequest) {
 
   if (PUBLIC_PATHS.has(pathname)) {
     if (pathname === "/login" && hasSession) {
-      return NextResponse.redirect(new URL("/users", request.url));
+      return NextResponse.redirect(new URL(defaultLandingPath(request), request.url));
     }
     return NextResponse.next();
   }
@@ -31,11 +31,29 @@ export function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
+/** Dashboard is SUPER_ADMIN-only (SuperAdminOnlyGuard on /admin/stats/**) — send that
+ *  role there by default and everyone else to Users (open to both roles), so a plain
+ *  ADMIN visiting /login while already signed in never lands on a page that just 403s.
+ *  Reads the readable (non-httpOnly) "who" cookie — display-only, not a security
+ *  boundary, same as everywhere else it's used (see lib/session.ts). */
+function defaultLandingPath(request: NextRequest): string {
+  const raw = request.cookies.get(COOKIE_WHO)?.value;
+  if (!raw) return "/users";
+  try {
+    const who = JSON.parse(raw) as { role?: string };
+    return who.role === "SUPER_ADMIN" ? "/dashboard" : "/users";
+  } catch {
+    return "/users";
+  }
+}
+
 export const config = {
-  // PWA assets (manifest, icons, service worker) need to be fetchable with no session —
-  // a browser/OS checking installability or registering the SW never sends cookies for
-  // that first request, and shouldn't be bounced to /login for trying.
-  matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|icon.png|apple-icon.png|manifest.webmanifest|sw.js|icons/).*)",
-  ],
+  // Excludes `api`, Next internals, and — generically — any path with a file extension
+  // (icons, the manifest, the service worker, images under public/, …), rather than
+  // naming each static asset one by one. Static files need to be fetchable with no
+  // session — a browser/OS checking PWA installability, an <img> on the logged-out login
+  // page, etc. never sends cookies for that first request, and shouldn't be bounced to
+  // /login for trying. Safe here because no actual app route in this project has a dot in
+  // its path (check that still holds before adding one).
+  matcher: ["/((?!api|_next/static|_next/image|.*\\..*).*)"],
 };

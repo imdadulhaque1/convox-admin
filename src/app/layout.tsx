@@ -22,7 +22,12 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="font-sans antialiased">
+      {/* Browser extensions (ColorZilla, Grammarly, etc.) inject attributes like
+          cz-shortcut-listen onto <body> before React hydrates, which React then reports
+          as a hydration mismatch — it's not an app bug, so this attribute is deliberately
+          exempted rather than "fixed". suppressHydrationWarning is shallow (this element
+          only), so a real mismatch elsewhere in the tree still gets a warning. */}
+      <body className="font-sans antialiased" suppressHydrationWarning>
         <ServiceWorkerRegistration />
         <ToastProvider>{children}</ToastProvider>
       </body>

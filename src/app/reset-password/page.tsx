@@ -3,7 +3,7 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ShieldAlert, ShieldCheck } from "lucide-react";
+import { ShieldAlert } from "lucide-react";
 
 export default function ResetPasswordPage() {
   return (
@@ -52,9 +52,8 @@ function ResetPasswordForm() {
     <div className="flex min-h-screen items-center justify-center bg-canvas px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center text-center">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-ink text-white shadow-card">
-            <ShieldCheck size={22} />
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, no need for next/image here */}
+          <img src="/convox-logo.png" alt="ConvoX" className="mb-4 h-12 w-12 rounded-2xl shadow-card" />
           <h1 className="text-xl font-semibold text-ink">Enter your reset code</h1>
           <p className="mt-1 text-sm text-slate-500">Check your email for the 4-digit code</p>
         </div>

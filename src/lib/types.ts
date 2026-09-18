@@ -107,6 +107,45 @@ export interface AdminReportSummary {
   reported: PublicUserSummary;
 }
 
+/** One point of a daily-bucketed trend line — GET /admin/stats/{users,reports} zero-fill
+ *  every day in the requested range, so a chart never has to handle gaps. */
+export interface DailyCount {
+  date: string;
+  count: number;
+}
+
+/** GET /admin/stats/users. */
+export interface UserStats {
+  total: number;
+  active: number;
+  deactivated: number;
+  deletedPermanently: number;
+  suspendedTemporarily: number;
+  signupsByDay: DailyCount[];
+}
+
+/** GET /admin/stats/reports. */
+export interface ReportStats {
+  total: number;
+  pending: number;
+  reviewed: number;
+  dismissed: number;
+  byReason: Record<ReportReason, number>;
+  reportsByDay: DailyCount[];
+}
+
+/** One row of GET /admin/stats/login-history — the global counterpart to
+ *  GET /admin/users/:id/login-history (no `isCurrent`, since that's meaningless once
+ *  you're looking across every user rather than one caller's own history). */
+export interface AdminLoginEventSummary {
+  id: number;
+  method: LoginMethod;
+  ipAddress: string | null;
+  userAgent: string | null;
+  createdAt: string;
+  user: PublicUserSummary;
+}
+
 export type AdminRole = "ADMIN" | "SUPER_ADMIN";
 
 /** The separate admin-panel identity (Admin table, not ConnectX User) — returned by

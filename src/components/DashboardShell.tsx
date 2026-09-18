@@ -3,14 +3,17 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Flag, LogOut, Menu, ShieldCheck, UserCog, Users, X } from "lucide-react";
+import { Flag, LayoutDashboard, LogOut, Menu, UserCog, Users, X } from "lucide-react";
 import type { AdminWhoAmI } from "@/lib/types";
 
-// Managing admin accounts is SUPER_ADMIN-only server-side (SuperAdminOnlyGuard on
-// /admin/admins) — filtered out below for a plain ADMIN so the nav doesn't link to a page
-// that will just 403. Users is open to both roles (day-to-day moderation); Reports is
-// still SUPER_ADMIN-only today but left visible here rather than assumed permanent.
+// SUPER_ADMIN_ONLY lists the items gated behind SuperAdminOnlyGuard server-side
+// (/admin/stats/**, /admin/admins) — filtered out below for a plain ADMIN so the nav
+// doesn't link to a page that will just 403. Users is open to both roles (day-to-day
+// moderation); Reports is still SUPER_ADMIN-only today but left visible here rather than
+// assumed permanent.
+const SUPER_ADMIN_ONLY = new Set(["/dashboard", "/admins"]);
 const NAV = [
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/users", label: "Users", icon: Users },
   { href: "/reports", label: "Reports", icon: Flag },
   { href: "/admins", label: "Admins", icon: UserCog },
@@ -49,7 +52,7 @@ export function DashboardShell({
     router.refresh();
   }
 
-  const nav = who?.role === "SUPER_ADMIN" ? NAV : NAV.filter((item) => item.href !== "/admins");
+  const nav = who?.role === "SUPER_ADMIN" ? NAV : NAV.filter((item) => !SUPER_ADMIN_ONLY.has(item.href));
   const currentLabel = nav.find((item) => pathname.startsWith(item.href))?.label ?? "ConvoX Admin";
 
   return (
@@ -86,9 +89,8 @@ export function DashboardShell({
       >
         <div className="flex items-center justify-between gap-2 px-5 py-5">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-white">
-              <ShieldCheck size={16} />
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, no need for next/image here */}
+            <img src="/convox-logo.png" alt="ConvoX" className="h-8 w-8 rounded-lg" />
             <span className="text-sm font-semibold text-white">ConvoX Admin</span>
           </div>
           <button

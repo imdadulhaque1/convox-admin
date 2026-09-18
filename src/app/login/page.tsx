@@ -3,7 +3,7 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { LockKeyhole, ShieldAlert } from "lucide-react";
+import { ShieldAlert } from "lucide-react";
 
 export default function LoginPage() {
   return (
@@ -36,7 +36,11 @@ function LoginForm() {
         setError(json.message ?? "Something went wrong.");
         return;
       }
-      const next = searchParams.get("next") ?? "/users";
+      // Dashboard is SUPER_ADMIN-only (SuperAdminOnlyGuard on /admin/stats/**) — default
+      // there for the role that can actually see it, and fall back to Users (open to
+      // both roles) otherwise, so a plain ADMIN never lands on a page that just 403s.
+      const defaultTarget = json.data?.who?.role === "SUPER_ADMIN" ? "/dashboard" : "/users";
+      const next = searchParams.get("next") ?? defaultTarget;
       router.replace(next);
       router.refresh();
     } catch {
@@ -50,9 +54,8 @@ function LoginForm() {
     <div className="flex min-h-screen items-center justify-center bg-canvas px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center text-center">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-ink text-white shadow-card">
-            <LockKeyhole size={22} />
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, no need for next/image here */}
+          <img src="/convox-logo.png" alt="ConvoX" className="mb-4 h-12 w-12 rounded-2xl shadow-card" />
           <h1 className="text-xl font-semibold text-ink">ConvoX Admin</h1>
           <p className="mt-1 text-sm text-slate-500">Sign in with a super-admin account</p>
         </div>

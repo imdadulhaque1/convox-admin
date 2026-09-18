@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { KeyRound, ShieldAlert } from "lucide-react";
+import { ShieldAlert } from "lucide-react";
 
 /** POST /admin/auth/forgot-password, via /api/auth/forgot-password. Always resolves the
  *  same way regardless of whether the email exists — mirrors that here by moving on to
@@ -41,9 +41,8 @@ export default function ForgotPasswordPage() {
     <div className="flex min-h-screen items-center justify-center bg-canvas px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center text-center">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-ink text-white shadow-card">
-            <KeyRound size={22} />
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset, no need for next/image here */}
+          <img src="/convox-logo.png" alt="ConvoX" className="mb-4 h-12 w-12 rounded-2xl shadow-card" />
           <h1 className="text-xl font-semibold text-ink">Reset your password</h1>
           <p className="mt-1 text-sm text-slate-500">
             We&apos;ll email a 4-digit code to your admin account
