@@ -32,5 +32,10 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  // PWA assets (manifest, icons, service worker) need to be fetchable with no session —
+  // a browser/OS checking installability or registering the SW never sends cookies for
+  // that first request, and shouldn't be bounced to /login for trying.
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|icon.png|apple-icon.png|manifest.webmanifest|sw.js|icons/).*)",
+  ],
 };

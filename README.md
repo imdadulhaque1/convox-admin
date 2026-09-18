@@ -86,6 +86,8 @@ src/
     login/page.tsx                 Sign-in form (Admin username + password)
     forgot-password/page.tsx       Request a reset code
     reset-password/page.tsx        Enter code + new password
+    manifest.ts                    PWA manifest (App Router convention → /manifest.webmanifest)
+    icon.png / apple-icon.png      Favicon / apple-touch-icon (App Router convention)
     (dashboard)/                   Everything behind the sidebar shell
       layout.tsx                  Reads the "who am I" cookie, renders DashboardShell
       users/page.tsx              User directory (search/filter/table)
@@ -106,7 +108,20 @@ src/
     session.ts / whoamiClient.ts Cookie read/write (server) and read-only client helper
     fetcher.ts                   Client-side fetch/mutate helpers used by SWR & pages
     format.ts / media.ts         Date formatting, avatar URL resolution
+components/ServiceWorkerRegistration.tsx  Registers public/sw.js on mount
+public/
+  sw.js                          Minimal SW (no caching — this is a live dashboard, not
+                                  offline content) that only exists to satisfy install criteria
+  icons/                         Manifest icon PNGs (192/512, "any" + "maskable" purposes)
 ```
+
+**PWA / installability.** `manifest.ts` + `icon.png`/`apple-icon.png` + `public/sw.js`
+together make this installable ("Add to Home Screen" / desktop install icon) — a
+standalone window, no browser chrome, using the icon under `public/icons/`. The service
+worker deliberately caches nothing: this app has no meaningful offline mode (every screen
+needs live data from the backend), so it only exists because some browsers still require
+an active SW before showing an install prompt. `middleware.ts`'s matcher explicitly
+excludes all of these paths — they need to be fetchable with no session cookie.
 
 ## Keeping this in sync with the backend
 

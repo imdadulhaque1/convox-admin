@@ -2,10 +2,6 @@ import { NextResponse } from "next/server";
 
 const MEDIA_BASE_URL = process.env.BACKEND_MEDIA_URL;
 
-if (!MEDIA_BASE_URL) {
-  throw new Error("BACKEND_MEDIA_URL is not set — copy .env.local.example to .env.local");
-}
-
 /**
  * GET /api/media/<uploads/avatars/x.jpg> → streams the same file from the backend's own
  * static file server (BACKEND_MEDIA_URL + /<path>). Uploaded files need no auth on the
@@ -15,6 +11,13 @@ if (!MEDIA_BASE_URL) {
  * way every other /api/** route already hides it for JSON calls. See <Avatar>/lib/media.ts.
  */
 export async function GET(_request: Request, context: { params: Promise<{ path: string[] }> }) {
+  if (!MEDIA_BASE_URL) {
+    return NextResponse.json(
+      { success: false, message: "Server misconfigured: BACKEND_MEDIA_URL is not set." },
+      { status: 500 },
+    );
+  }
+
   const { path } = await context.params;
 
   if (path.some((segment) => segment === "..")) {

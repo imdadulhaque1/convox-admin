@@ -4,10 +4,12 @@ import { clearSessionCookies, readSession, setSessionCookies } from "./session";
 
 const BASE_URL = process.env.BACKEND_BASE_URL;
 
-if (!BASE_URL) {
-  // Fails loudly at import time in dev rather than every request silently hitting "undefined/...".
-  throw new Error("BACKEND_BASE_URL is not set — copy .env.local.example to .env.local");
-}
+// Deliberately not thrown at module scope: Next's build step imports every route handler
+// to bundle it ("Collecting page data"), so a top-level throw here fails the *entire
+// build* the moment this env var is missing anywhere (e.g. not yet set in a fresh Vercel
+// project) — even though it's only actually needed once a request comes in. Checked
+// inside backendFetch instead, so a misconfigured deploy fails the one request that needs
+// it, with a clear message, rather than refusing to build at all.
 
 export interface BackendResult<T> {
   status: number;
@@ -37,6 +39,15 @@ export async function backendFetch<T = unknown>(
     query?: Record<string, string | number | undefined>;
   } = {},
 ): Promise<BackendResult<T>> {
+  if (!BASE_URL) {
+    return {
+      status: 500,
+      body: { success: false, statusCode: 500, message: "Server misconfigured: BACKEND_BASE_URL is not set.", data: null as T },
+      rotated: null,
+      sessionDead: false,
+    };
+  }
+
   const url = new URL(`${BASE_URL}${path}`);
   if (opts.query) {
     for (const [key, value] of Object.entries(opts.query)) {
